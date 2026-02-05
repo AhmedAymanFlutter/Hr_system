@@ -2,15 +2,17 @@ import 'package:flutter/material.dart';
 import 'app_colors.dart';
 
 class AppTextStyles {
-  // Display
+  // Headings
   static const TextStyle displayLarge = TextStyle(
     fontSize: 32,
-    fontWeight: FontWeight.bold,
+    fontWeight: FontWeight.w800,
     color: AppColors.textPrimary,
-    letterSpacing: -0.5,
+    letterSpacing: -0.02,
+    height: 1.2,
   );
 
   static const TextStyle displayMedium = TextStyle(
+    // Added back
     fontSize: 28,
     fontWeight: FontWeight.bold,
     color: AppColors.textPrimary,
@@ -18,31 +20,37 @@ class AppTextStyles {
   );
 
   static const TextStyle displaySmall = TextStyle(
+    // Added back
     fontSize: 24,
     fontWeight: FontWeight.w600,
     color: AppColors.textPrimary,
   );
 
-  // Headings
   static const TextStyle h1 = TextStyle(
-    fontSize: 22,
-    fontWeight: FontWeight.bold,
+    fontSize: 24,
+    fontWeight: FontWeight.w700,
     color: AppColors.textPrimary,
+    letterSpacing: -0.01,
+    height: 1.3,
   );
 
   static const TextStyle h2 = TextStyle(
     fontSize: 20,
     fontWeight: FontWeight.w600,
     color: AppColors.textPrimary,
+    letterSpacing: -0.01,
+    height: 1.4,
   );
 
   static const TextStyle h3 = TextStyle(
     fontSize: 18,
     fontWeight: FontWeight.w600,
     color: AppColors.textPrimary,
+    height: 1.4,
   );
 
   static const TextStyle h4 = TextStyle(
+    // Added back
     fontSize: 16,
     fontWeight: FontWeight.w600,
     color: AppColors.textPrimary,
@@ -51,69 +59,53 @@ class AppTextStyles {
   // Body
   static const TextStyle bodyLarge = TextStyle(
     fontSize: 16,
-    fontWeight: FontWeight.normal,
+    fontWeight: FontWeight.w400,
     color: AppColors.textPrimary,
     height: 1.5,
   );
 
   static const TextStyle bodyMedium = TextStyle(
     fontSize: 14,
-    fontWeight: FontWeight.normal,
-    color: AppColors.textPrimary,
+    fontWeight: FontWeight.w400,
+    color: AppColors.textSecondary,
     height: 1.5,
   );
 
   static const TextStyle bodySmall = TextStyle(
     fontSize: 12,
-    fontWeight: FontWeight.normal,
+    fontWeight: FontWeight.w400,
     color: AppColors.textSecondary,
     height: 1.5,
   );
 
-  // Labels
-  static const TextStyle labelLarge = TextStyle(
+  // Interactive
+  static const TextStyle button = TextStyle(
     fontSize: 14,
-    fontWeight: FontWeight.w500,
-    color: AppColors.textPrimary,
+    fontWeight: FontWeight.w600,
+    color: AppColors.white,
+    letterSpacing: 0.5,
   );
 
-  static const TextStyle labelMedium = TextStyle(
+  static const TextStyle label = TextStyle(
     fontSize: 12,
-    fontWeight: FontWeight.w500,
+    fontWeight: FontWeight.w600,
     color: AppColors.textSecondary,
+    letterSpacing: 0.5,
   );
 
+  // Retro identifiers
+  static const TextStyle labelLarge = label;
+  static const TextStyle labelMedium = label; // Aliased
   static const TextStyle labelSmall = TextStyle(
+    // Aliased
     fontSize: 11,
     fontWeight: FontWeight.w500,
     color: AppColors.textHint,
   );
 
-  // Button
-  static const TextStyle button = TextStyle(
-    fontSize: 14,
-    fontWeight: FontWeight.w600,
-    letterSpacing: 0.5,
-  );
-
-  static const TextStyle buttonLarge = TextStyle(
-    fontSize: 16,
-    fontWeight: FontWeight.w600,
-    letterSpacing: 0.5,
-  );
-
-  // Caption
   static const TextStyle caption = TextStyle(
     fontSize: 12,
     fontWeight: FontWeight.normal,
     color: AppColors.textHint,
-  );
-
-  // Overline
-  static const TextStyle overline = TextStyle(
-    fontSize: 10,
-    fontWeight: FontWeight.w500,
-    color: AppColors.textSecondary,
-    letterSpacing: 1.5,
   );
 }

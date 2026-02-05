@@ -1,10 +1,17 @@
 import 'package:equatable/equatable.dart';
+import '../../data/models/task_model.dart';
 
 class DashboardStats {
   final int totalEmployees;
   final int presentToday;
   final int pendingLeaves;
   final double monthlyPayroll;
+
+  /* final List<dynamic> assignedTasks; */ // Removed hack
+  final List<TaskModel> assignedTasks;
+  final bool isCheckedIn;
+  final List<ActivityLog> recentActivity;
+  final Map<String, double> trends;
 
   const DashboardStats({
     required this.totalEmployees,
@@ -13,11 +20,25 @@ class DashboardStats {
     required this.monthlyPayroll,
     this.assignedTasks = const [],
     this.isCheckedIn = false,
+    this.recentActivity = const [],
+    this.trends = const {},
   });
+}
 
-  final List<dynamic>
-  assignedTasks; // Using dynamic for now to avoid circular import issues, will fix cleanly.
-  final bool isCheckedIn;
+class ActivityLog {
+  final String id;
+  final String title;
+  final String subtitle;
+  final DateTime timestamp;
+  final String type;
+
+  const ActivityLog({
+    required this.id,
+    required this.title,
+    required this.subtitle,
+    required this.timestamp,
+    required this.type,
+  });
 }
 
 abstract class DashboardState extends Equatable {

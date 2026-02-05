@@ -96,11 +96,42 @@ class DashboardCubit extends Cubit<DashboardState> {
         final pendingLeaves = results[2] as List;
         final payrollSummary = results[3] as Map<String, double>;
 
+        // Mock Activity Log
+        final recentActivity = [
+          ActivityLog(
+            id: '1',
+            title: 'Sarah Johnson',
+            subtitle: 'Checked in at 09:00 AM',
+            timestamp: DateTime.now().subtract(const Duration(minutes: 30)),
+            type: 'attendance',
+          ),
+          ActivityLog(
+            id: '2',
+            title: 'John Doe',
+            subtitle: 'Requested Sick Leave',
+            timestamp: DateTime.now().subtract(const Duration(hours: 2)),
+            type: 'leave',
+          ),
+          ActivityLog(
+            id: '3',
+            title: 'System',
+            subtitle: 'Payroll generated for July',
+            timestamp: DateTime.now().subtract(const Duration(days: 1)),
+            type: 'payroll',
+          ),
+        ];
+
         final stats = DashboardStats(
           totalEmployees: employees.length,
           presentToday: todayAttendance.length,
           pendingLeaves: pendingLeaves.length,
           monthlyPayroll: payrollSummary['netSalary'] ?? 0,
+          recentActivity: recentActivity,
+          trends: {
+            'employees': 12.5, // +12.5%
+            'attendance': -2.0, // -2%
+            'payroll': 5.4,
+          },
         );
 
         emit(DashboardLoaded(stats));

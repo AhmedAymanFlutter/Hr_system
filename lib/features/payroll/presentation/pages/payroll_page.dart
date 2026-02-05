@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hr_system/domain/repositories/payroll_repository.dart';
 import 'package:intl/intl.dart';
 
@@ -45,11 +46,13 @@ class _PayrollPageState extends State<PayrollPage> {
         title: const Text('Payroll'),
         actions: [
           IconButton(
-            icon: const Icon(Icons.refresh),
+            icon: const Icon(Icons.close),
             onPressed: () {
-              setState(() {
-                _loadPayroll();
-              });
+              if (context.canPop()) {
+                context.pop();
+              } else {
+                context.go('/dashboard');
+              }
             },
           ),
         ],

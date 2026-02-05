@@ -1,29 +1,35 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import '../../../../core/usecases/usecase.dart';
 import '../../../../data/models/user_model.dart';
-import '../../../../domain/repositories/auth_repository.dart';
+import '../../domain/usecases/get_current_user_usecase.dart';
+import '../../domain/usecases/login_usecase.dart';
+import '../../domain/usecases/logout_usecase.dart';
 import 'auth_state.dart';
-import 'dart:convert';
 
 class AuthCubit extends Cubit<AuthState> {
-  final AuthRepository repository;
+  final LoginUseCase loginUseCase;
+  final LogoutUseCase logoutUseCase;
+  final GetCurrentUserUseCase getCurrentUserUseCase;
 
-  AuthCubit(this.repository) : super(const AuthInitial()) {
+  AuthCubit({
+    required this.loginUseCase,
+    required this.logoutUseCase,
+    required this.getCurrentUserUseCase,
+  }) : super(const AuthInitial()) {
     _checkAuthStatus();
   }
 
   Future<void> _checkAuthStatus() async {
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      final userJson = prefs.getString('current_user');
+    final result = await getCurrentUserUseCase(NoParams());
 
-      if (userJson != null) {
-        final user = UserModel.fromJson(json.decode(userJson));
+    if (result is Success) {
+      final user = (result as Success<UserModel?, dynamic>).value;
+      if (user != null) {
         emit(AuthAuthenticated(user));
       } else {
         emit(const AuthUnauthenticated());
       }
-    } catch (e) {
+    } else {
       emit(const AuthUnauthenticated());
     }
   }
@@ -31,30 +37,26 @@ class AuthCubit extends Cubit<AuthState> {
   Future<void> login(String email, String password) async {
     emit(const AuthLoading());
 
-    try {
-      final user = await repository.login(email, password);
+    final result = await loginUseCase(
+      LoginParams(email: email, password: password),
+    );
 
-      // Store user data locally
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('current_user', json.encode(user.toJson()));
-
-      emit(AuthAuthenticated(user));
-    } catch (e) {
-      emit(AuthError(e.toString().replaceAll('Exception: ', '')));
+    // Using strict type check for Result
+    if (result is Success<UserModel, dynamic>) {
+      emit(AuthAuthenticated((result as Success<UserModel, dynamic>).value));
+    } else if (result is Error<UserModel, dynamic>) {
+      // Assuming generic Error class has a message or failure props
+      // For now, simpler error handling
+      emit(const AuthError('Login Failed'));
     }
   }
 
   Future<void> logout() async {
-    try {
-      await repository.logout();
-
-      // Clear user data
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.remove('current_user');
-
+    final result = await logoutUseCase(NoParams());
+    if (result is Success) {
       emit(const AuthUnauthenticated());
-    } catch (e) {
-      emit(AuthError(e.toString()));
+    } else {
+      emit(const AuthError('Logout Failed'));
     }
   }
 

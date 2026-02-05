@@ -11,7 +11,8 @@ import '../../../auth/presentation/cubit/auth_state.dart';
 import '../../../../data/models/user_model.dart';
 import '../cubit/dashboard_cubit.dart';
 import '../cubit/dashboard_state.dart';
-import '../widgets/summary_card.dart';
+import '../widgets/dashboard_analytics_card.dart';
+import '../widgets/recent_activity_list.dart';
 import '../widgets/attendance_chart.dart';
 
 class DashboardPage extends StatefulWidget {
@@ -121,49 +122,69 @@ class _DashboardPageState extends State<DashboardPage> {
           ),
           const SizedBox(height: 24),
 
-          // Summary Cards
+          // Analytics Cards
           GridView.count(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             crossAxisCount: crossAxisCount,
             crossAxisSpacing: Responsive.getCardSpacing(context),
             mainAxisSpacing: Responsive.getCardSpacing(context),
-            childAspectRatio: isMobile ? 1.5 : 1.3,
+            childAspectRatio: isMobile ? 1.4 : 1.6,
             children: [
-              SummaryCard(
+              DashboardAnalyticsCard(
                 title: 'Total Employees',
                 value: stats.totalEmployees.toString(),
                 icon: Icons.people,
                 color: AppColors.primary,
+                trend: stats.trends['employees'],
                 onTap: () => context.go('/employees'),
               ),
-              SummaryCard(
+              DashboardAnalyticsCard(
                 title: 'Present Today',
                 value: stats.presentToday.toString(),
                 icon: Icons.check_circle,
                 color: AppColors.success,
+                trend: stats.trends['attendance'],
                 onTap: () => context.go('/attendance'),
               ),
-              SummaryCard(
+              DashboardAnalyticsCard(
                 title: 'Pending Leaves',
                 value: stats.pendingLeaves.toString(),
                 icon: Icons.pending_actions,
                 color: AppColors.warning,
                 onTap: () => context.go('/leaves'),
               ),
-              CurrencySummaryCard(
+              DashboardAnalyticsCard(
                 title: 'Monthly Payroll',
-                amount: stats.monthlyPayroll,
+                value: '\$${stats.monthlyPayroll.toStringAsFixed(0)}',
                 icon: Icons.attach_money,
                 color: AppColors.secondary,
+                trend: stats.trends['payroll'],
                 onTap: () => context.go('/payroll'),
               ),
             ],
           ),
-          const SizedBox(height: 24),
 
-          // Charts Section
-          const AttendanceChart(),
+          const SizedBox(height: 32),
+
+          // Charts & Activity Row
+          if (!isMobile)
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Expanded(flex: 2, child: AttendanceChart()),
+                const SizedBox(width: 24),
+                Expanded(
+                  flex: 1,
+                  child: RecentActivityList(activities: stats.recentActivity),
+                ),
+              ],
+            )
+          else ...[
+            const AttendanceChart(),
+            const SizedBox(height: 24),
+            RecentActivityList(activities: stats.recentActivity),
+          ],
         ],
       ),
     );
@@ -284,6 +305,7 @@ class _DashboardPageState extends State<DashboardPage> {
                           ? AppColors.error
                           : AppColors.success,
                       foregroundColor: Colors.white,
+                      textStyle: AppTextStyles.h3,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
@@ -291,7 +313,6 @@ class _DashboardPageState extends State<DashboardPage> {
                     icon: Icon(stats.isCheckedIn ? Icons.logout : Icons.login),
                     label: Text(
                       stats.isCheckedIn ? 'Check Out' : 'Check In Now',
-                      style: AppTextStyles.h3.copyWith(color: Colors.white),
                     ),
                   ),
                 ),
@@ -471,6 +492,12 @@ class _DashboardPageState extends State<DashboardPage> {
             icon: Icons.attach_money,
             title: 'Payroll',
             route: '/payroll',
+          ),
+          _buildDrawerItem(
+            context,
+            icon: Icons.wc,
+            title: 'Bathroom',
+            route: '/bathroom',
           ),
           const Divider(),
           ListTile(

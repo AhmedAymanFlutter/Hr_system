@@ -48,6 +48,10 @@ dependencies:
   # Utils
   intl: ^0.18.1
   shared_preferences: ^2.2.2
+  
+  # Networking & DI
+  dio: ^5.4.0
+  get_it: ^7.6.0
 
 dev_dependencies:
   flutter_test:

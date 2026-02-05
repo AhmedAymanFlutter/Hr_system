@@ -34,6 +34,8 @@ class MockAuthDataSource {
     ),
   ];
 
+  UserModel? _currentUser;
+
   Future<UserModel> login(String email, String password) async {
     await _simulateDelay();
 
@@ -43,17 +45,17 @@ class MockAuthDataSource {
       orElse: () => throw Exception('Invalid email or password'),
     );
 
+    _currentUser = user;
     return user;
   }
 
   Future<void> logout() async {
     await _simulateDelay();
-    // Simulate logout
+    _currentUser = null;
   }
 
   Future<UserModel?> getCurrentUser() async {
-    await _simulateDelay();
-    // In a real app, this would check stored auth token
-    return null;
+    await _simulateDelay(); // Keep delay to simulate network, but return actual user
+    return _currentUser;
   }
 }
