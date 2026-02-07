@@ -4,17 +4,20 @@ import '../../../../data/models/leave_model.dart';
 import '../../domain/usecases/get_leaves_usecase.dart';
 import '../../domain/usecases/submit_leave_usecase.dart';
 import '../../domain/usecases/approve_leave_usecase.dart';
+import '../../domain/usecases/reject_leave_usecase.dart';
 import 'leaves_state.dart';
 
 class LeavesCubit extends Cubit<LeavesState> {
   final GetLeavesUseCase getLeavesUseCase;
   final SubmitLeaveUseCase submitLeaveUseCase;
   final ApproveLeaveUseCase approveLeaveUseCase;
+  final RejectLeaveUseCase rejectLeaveUseCase;
 
   LeavesCubit({
     required this.getLeavesUseCase,
     required this.submitLeaveUseCase,
     required this.approveLeaveUseCase,
+    required this.rejectLeaveUseCase,
   }) : super(const LeavesInitial());
 
   Future<void> loadLeaves({
@@ -49,6 +52,19 @@ class LeavesCubit extends Cubit<LeavesState> {
     emit(const LeavesLoading());
     final result = await approveLeaveUseCase(
       ApproveLeaveParams(leaveId: leaveId, approvedBy: adminId),
+    );
+    if (result is Success) {
+      loadLeaves(isPendingOnly: true); // Reload pending
+    } else {
+      final failure = (result as Error).failure;
+      emit(LeavesError(failure.message));
+    }
+  }
+
+  Future<void> rejectLeave(String leaveId, String reason) async {
+    emit(const LeavesLoading());
+    final result = await rejectLeaveUseCase(
+      RejectLeaveParams(leaveId: leaveId, rejectionReason: reason),
     );
     if (result is Success) {
       loadLeaves(isPendingOnly: true); // Reload pending

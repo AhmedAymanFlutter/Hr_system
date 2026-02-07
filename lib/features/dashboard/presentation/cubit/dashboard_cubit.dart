@@ -81,7 +81,7 @@ class DashboardCubit extends Cubit<DashboardState> {
           isCheckedIn: isCheckedIn,
           assignedTasks: assignedTasks,
         );
-        emit(DashboardLoaded(stats));
+        if (!isClosed) emit(DashboardLoaded(stats));
       } else {
         // Load Admin/HR Data (Existing Logic)
         final results = await Future.wait([
@@ -134,10 +134,10 @@ class DashboardCubit extends Cubit<DashboardState> {
           },
         );
 
-        emit(DashboardLoaded(stats));
+        if (!isClosed) emit(DashboardLoaded(stats));
       }
     } catch (e) {
-      emit(DashboardError(e.toString()));
+      if (!isClosed) emit(DashboardError(e.toString()));
     }
   }
 

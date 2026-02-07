@@ -14,6 +14,15 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../features/chat/presentation/pages/chat_list_page.dart';
 import '../features/chat/presentation/pages/chat_detail_page.dart';
 import '../features/chat/domain/entities/chat.dart';
+import '../features/tasks/presentation/pages/task_list_page.dart';
+import '../features/tasks/presentation/pages/add_task_page.dart';
+import '../features/announcements/presentation/pages/announcement_list_page.dart';
+import '../features/announcements/presentation/pages/create_announcement_page.dart';
+import '../features/calendar/presentation/pages/calendar_page.dart';
+import '../features/reviews/presentation/pages/review_list_page.dart';
+import '../features/reviews/presentation/pages/create_review_page.dart';
+import '../features/expenses/presentation/pages/expense_list_page.dart';
+import '../features/expenses/presentation/pages/create_expense_page.dart';
 
 class AppRouter {
   static GoRouter router = GoRouter(
@@ -72,6 +81,59 @@ class AppRouter {
               final chat = state.extra as Chat;
               return ChatDetailPage(chat: chat);
             },
+          ),
+        ],
+      ),
+      GoRoute(
+        path: '/tasks',
+        name: 'tasks',
+        builder: (context, state) => const TaskListPage(),
+        routes: [
+          GoRoute(
+            path: 'add',
+            name: 'add_task',
+            builder: (context, state) => const AddTaskPage(),
+          ),
+        ],
+      ),
+      GoRoute(
+        path: '/announcements',
+        name: 'announcements',
+        builder: (context, state) => const AnnouncementListPage(),
+        routes: [
+          GoRoute(
+            path: 'create',
+            name: 'create_announcement',
+            builder: (context, state) => const CreateAnnouncementPage(),
+          ),
+        ],
+      ),
+      GoRoute(
+        path: '/calendar',
+        name: 'calendar',
+        builder: (context, state) => const CalendarPage(),
+      ),
+      GoRoute(
+        path: '/reviews',
+        name: 'reviews',
+        builder: (context, state) => const ReviewListPage(),
+        routes: [
+          GoRoute(
+            path: 'create',
+            name: 'create_review',
+            builder: (context, state) => const CreateReviewPage(),
+          ),
+        ],
+      ),
+      GoRoute(
+        path: '/expenses',
+        name: 'expenses',
+        builder: (context, state) => const ExpenseListPage(),
+        routes: [
+          GoRoute(
+            path: 'create',
+            name: 'create_expense',
+            builder: (context, state) => const CreateExpensePage(),
           ),
         ],
       ),

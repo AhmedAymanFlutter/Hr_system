@@ -66,7 +66,7 @@ class _LeavesPageState extends State<LeavesPage>
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
-          // TODO: Implement Request Leave form
+          _showRequestLeaveDialog(context);
         },
         icon: const Icon(Icons.add),
         label: const Text('Request Leave'),
@@ -151,7 +151,7 @@ class _LeavesPageState extends State<LeavesPage>
                     height: 36,
                     child: OutlinedButton(
                       onPressed: () {
-                        // Implement reject
+                        _showRejectDialog(context, leave.id);
                       },
                       child: const Text('Reject'),
                     ),
@@ -209,6 +209,188 @@ class _LeavesPageState extends State<LeavesPage>
           color: color,
           fontWeight: FontWeight.bold,
         ),
+      ),
+    );
+  }
+
+  void _showRejectDialog(BuildContext context, String leaveId) {
+    final reasonController = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Reject Leave Request'),
+        content: TextField(
+          controller: reasonController,
+          decoration: const InputDecoration(
+            labelText: 'Rejection Reason',
+            hintText: 'Enter reason for rejection',
+          ),
+          maxLines: 2,
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              if (reasonController.text.isNotEmpty) {
+                context.read<LeavesCubit>().rejectLeave(
+                  leaveId,
+                  reasonController.text,
+                );
+                Navigator.pop(context);
+              }
+            },
+            style: ElevatedButton.styleFrom(backgroundColor: AppColors.error),
+            child: const Text('Reject'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showRequestLeaveDialog(BuildContext context) {
+    final formKey = GlobalKey<FormState>();
+    LeaveType selectedType = LeaveType.annual;
+    DateTime? startDate;
+    DateTime? endDate;
+    final reasonController = TextEditingController();
+    // Assuming current employee IS for demo
+    const String currentEmployeeId = "1";
+    const String currentEmployeeName = "John Doe";
+
+    showDialog(
+      context: context,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) {
+          return AlertDialog(
+            title: const Text('Request Leave'),
+            content: SingleChildScrollView(
+              child: Form(
+                key: formKey,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    DropdownButtonFormField<LeaveType>(
+                      value: selectedType,
+                      decoration: const InputDecoration(
+                        labelText: 'Leave Type',
+                      ),
+                      items: LeaveType.values.map((type) {
+                        return DropdownMenuItem(
+                          value: type,
+                          child: Text(type.name.toUpperCase()),
+                        );
+                      }).toList(),
+                      onChanged: (value) {
+                        if (value != null) {
+                          setState(() => selectedType = value);
+                        }
+                      },
+                    ),
+                    const SizedBox(height: 16),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: TextButton.icon(
+                            onPressed: () async {
+                              final picked = await showDatePicker(
+                                context: context,
+                                initialDate: DateTime.now(),
+                                firstDate: DateTime.now(),
+                                lastDate: DateTime.now().add(
+                                  const Duration(days: 365),
+                                ),
+                              );
+                              if (picked != null) {
+                                setState(() => startDate = picked);
+                              }
+                            },
+                            icon: const Icon(Icons.calendar_today),
+                            label: Text(
+                              startDate == null
+                                  ? 'Start Date'
+                                  : DateFormat('MMM dd').format(startDate!),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: TextButton.icon(
+                            onPressed: () async {
+                              final picked = await showDatePicker(
+                                context: context,
+                                initialDate: startDate ?? DateTime.now(),
+                                firstDate: startDate ?? DateTime.now(),
+                                lastDate: DateTime.now().add(
+                                  const Duration(days: 365),
+                                ),
+                              );
+                              if (picked != null) {
+                                setState(() => endDate = picked);
+                              }
+                            },
+                            icon: const Icon(Icons.calendar_today),
+                            label: Text(
+                              endDate == null
+                                  ? 'End Date'
+                                  : DateFormat('MMM dd').format(endDate!),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    TextFormField(
+                      controller: reasonController,
+                      decoration: const InputDecoration(labelText: 'Reason'),
+                      validator: (value) =>
+                          value == null || value.isEmpty ? 'Required' : null,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('Cancel'),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  if (formKey.currentState!.validate() &&
+                      startDate != null &&
+                      endDate != null) {
+                    final daysCount =
+                        endDate!.difference(startDate!).inDays + 1;
+
+                    final newLeave = LeaveModel(
+                      id: '', // Will be generated
+                      employeeId: currentEmployeeId,
+                      employeeName: currentEmployeeName,
+                      type: selectedType,
+                      startDate: startDate!,
+                      endDate: endDate!,
+                      daysCount: daysCount,
+                      reason: reasonController.text,
+                      status: LeaveStatus.pending,
+                      requestDate: DateTime.now(),
+                    );
+
+                    context.read<LeavesCubit>().submitLeave(newLeave);
+                    Navigator.pop(context);
+                  } else if (startDate == null || endDate == null) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Please select dates')),
+                    );
+                  }
+                },
+                child: const Text('Submit'),
+              ),
+            ],
+          );
+        },
       ),
     );
   }

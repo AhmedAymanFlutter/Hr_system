@@ -499,6 +499,36 @@ class _DashboardPageState extends State<DashboardPage> {
             title: 'Bathroom',
             route: '/bathroom',
           ),
+          _buildDrawerItem(
+            context,
+            icon: Icons.task,
+            title: 'Tasks',
+            route: '/tasks',
+          ),
+          _buildDrawerItem(
+            context,
+            icon: Icons.campaign,
+            title: 'Announcements',
+            route: '/announcements',
+          ),
+          _buildDrawerItem(
+            context,
+            icon: Icons.calendar_month,
+            title: 'Calendar',
+            route: '/calendar',
+          ),
+          _buildDrawerItem(
+            context,
+            icon: Icons.reviews,
+            title: 'Reviews',
+            route: '/reviews',
+          ),
+          _buildDrawerItem(
+            context,
+            icon: Icons.attach_money,
+            title: 'Expenses',
+            route: '/expenses',
+          ),
           const Divider(),
           ListTile(
             leading: const Icon(Icons.logout),

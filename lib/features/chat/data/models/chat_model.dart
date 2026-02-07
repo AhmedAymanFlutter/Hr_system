@@ -1,5 +1,4 @@
 import '../../domain/entities/chat.dart';
-import '../../domain/entities/message.dart';
 import 'message_model.dart';
 
 class ChatModel extends Chat {

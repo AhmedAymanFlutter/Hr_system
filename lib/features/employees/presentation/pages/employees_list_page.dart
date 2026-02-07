@@ -191,21 +191,6 @@ class _EmployeesListPageState extends State<EmployeesListPage> {
     );
   }
 
-  Widget _buildDetailRow(String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
-      child: Row(
-        children: [
-          SizedBox(
-            width: 100,
-            child: Text(label, style: AppTextStyles.labelSmall),
-          ),
-          Expanded(child: Text(value, style: AppTextStyles.bodySmall)),
-        ],
-      ),
-    );
-  }
-
   Widget _buildStatusChip(EmployeeStatus status) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),

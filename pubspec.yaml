@@ -53,6 +53,8 @@ dependencies:
   dio: ^5.4.0
   get_it: ^7.6.0
   dartz: ^0.10.1
+  table_calendar: ^3.0.9
+  image_picker: ^1.2.1
 
 dev_dependencies:
   flutter_test:
