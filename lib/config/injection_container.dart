@@ -50,6 +50,16 @@ import '../features/dashboard/presentation/cubit/dashboard_cubit.dart';
 import '../features/employees/presentation/cubit/employees_cubit.dart';
 import '../features/bathroom/cubit/bathroom_cubit.dart';
 
+// Chat Features
+import '../features/chat/domain/usecases/get_chats.dart';
+import '../features/chat/domain/usecases/get_messages.dart';
+import '../features/chat/domain/usecases/send_message.dart';
+import '../features/chat/presentation/cubit/chat_list/chat_list_cubit.dart';
+import '../features/chat/presentation/cubit/chat_detail/chat_detail_cubit.dart';
+import '../features/chat/domain/repositories/chat_repository.dart';
+import '../features/chat/data/repositories/chat_repository_impl.dart';
+import '../features/chat/data/datasources/chat_remote_data_source.dart';
+
 final sl = GetIt.instance;
 
 Future<void> init() async {
@@ -164,5 +174,27 @@ Future<void> init() async {
       leaveRepository: sl(),
       payrollRepository: sl(),
     ),
+  );
+
+  //! Features - Chat
+  // Cubits
+  sl.registerFactory(() => ChatListCubit(getChats: sl()));
+  sl.registerFactory(
+    () => ChatDetailCubit(getMessages: sl(), sendMessageUseCase: sl()),
+  );
+
+  // UseCases
+  sl.registerLazySingleton(() => GetChats(sl()));
+  sl.registerLazySingleton(() => GetMessages(sl()));
+  sl.registerLazySingleton(() => SendMessage(sl()));
+
+  // Repository
+  sl.registerLazySingleton<ChatRepository>(
+    () => ChatRepositoryImpl(remoteDataSource: sl()),
+  );
+
+  // Data Sources
+  sl.registerLazySingleton<ChatRemoteDataSource>(
+    () => ChatRemoteDataSourceImpl(),
   );
 }

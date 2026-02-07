@@ -11,6 +11,9 @@ import '../features/bathroom/cubit/bathroom_cubit.dart';
 import '../domain/repositories/bathroom_repository.dart';
 import '../domain/repositories/auth_repository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../features/chat/presentation/pages/chat_list_page.dart';
+import '../features/chat/presentation/pages/chat_detail_page.dart';
+import '../features/chat/domain/entities/chat.dart';
 
 class AppRouter {
   static GoRouter router = GoRouter(
@@ -56,6 +59,21 @@ class AppRouter {
           ),
           child: const BathroomPage(),
         ),
+      ),
+      GoRoute(
+        path: '/chat',
+        name: 'chat',
+        builder: (context, state) => const ChatListPage(),
+        routes: [
+          GoRoute(
+            path: 'detail',
+            name: 'chat_detail',
+            builder: (context, state) {
+              final chat = state.extra as Chat;
+              return ChatDetailPage(chat: chat);
+            },
+          ),
+        ],
       ),
     ],
     errorBuilder: (context, state) =>
